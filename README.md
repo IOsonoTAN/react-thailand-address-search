@@ -1,5 +1,5 @@
-[![npm version](https://badge.fury.io/js/package-name.svg)](https://badge.fury.io/js/package-name)
-[![GitHub license](https://img.shields.io/github/license/username/repo-name.svg)](https://github.com/username/repo-name/blob/master/LICENSE)
+[![npm version](https://badge.fury.io/js/react-thailand-address-search.svg)](https://badge.fury.io/js/react-thailand-address-search)
+[![GitHub license](https://img.shields.io/github/license/IOsonoTAN/react-thailand-address-search.svg)](https://github.com/IOsonoTAN/react-thailand-address-search/blob/master/LICENSE)
 
 # Thailand Location Search
 
