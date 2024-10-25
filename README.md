@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/package-name.svg)](https://badge.fury.io/js/package-name)
+[![GitHub license](https://img.shields.io/github/license/username/repo-name.svg)](https://github.com/username/repo-name/blob/master/LICENSE)
+
 # Thailand Location Search
 
 This project is a React-based web application that provides a user-friendly interface for searching locations in Thailand. It allows users to search for provinces, districts, sub-districts, and postal codes in both Thai and English languages. The application is designed to be fast, efficient, and easy to use, making it an ideal tool for both locals and tourists navigating Thailand's administrative divisions.
