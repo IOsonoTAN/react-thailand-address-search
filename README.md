@@ -28,12 +28,12 @@ This project is a React-based web application that provides a user-friendly inte
 
 ## How to use
 
-Install the package
+### Install the package
 ```bash
 npm install react-thailand-address-search
 ```
 
-Import the component (TypeScript)
+### Import the component (TypeScript)
 ```typescript
 import ThailandAddressSearch, { ThailandData } from "react-thailand-address-search";
 ..
@@ -66,7 +66,7 @@ console.log(selectedLocation);
 />
 ```
 
-## Available parameters
+### Available parameters
 
 | Parameter | Type | Mandatory | Description |
 |-----------|------|-----------|-------------|
@@ -75,7 +75,8 @@ console.log(selectedLocation);
 | searchTermFormat | `string` | Yes | Template string for formatting how search results are displayed |
 | dataSource | `string` | No | URL path to the ZIP file containing Thailand location data (Default: `/data/thailand.zip` in public folder) |
 
-Where to get the data?
+### Download the data
+
 You can get the data from [data/thailand.zip](/public/data/thailand.zip).
 
 ## How It Works
