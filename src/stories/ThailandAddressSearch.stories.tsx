@@ -41,12 +41,44 @@ EnglishLanguage.args = {
 export const CustomHighlight = Template.bind({});
 CustomHighlight.args = {
   ...Default.args,
-  highlightColor: "bg-green-200",
+  highlightColor: "bg-gray-200",
+  dropdownSelectedColor: "bg-green-200",
 };
 
 export const CustomSearchTermFormat = Template.bind({});
 CustomSearchTermFormat.args = {
   ...Default.args,
   searchTermFormat:
-    ":provinceName, :districtName, :subdistrictName (:postalCode)",
+    ":districtName 👉 :subdistrictName 👉 :provinceName (:postalCode)",
+};
+
+export const CustomSeparator = Template.bind({});
+CustomSeparator.args = {
+  ...Default.args,
+  separator: " > ",
+};
+
+export const CustomPlaceholder = Template.bind({});
+CustomPlaceholder.args = {
+  ...Default.args,
+  placeholder: "Input here!",
+};
+
+export const CustomMaxResults = Template.bind({});
+CustomMaxResults.args = {
+  ...Default.args,
+  maxResults: 2,
+};
+
+export const CustomDisplayFields = Template.bind({});
+CustomDisplayFields.args = {
+  ...Default.args,
+  displayFields: ["subdistrictName", "postalCode"],
+  placeholder: "Search for zipcode",
+};
+
+export const CustomDropdownSelectedColor = Template.bind({});
+CustomDropdownSelectedColor.args = {
+  ...Default.args,
+  dropdownSelectedColor: "bg-red-200",
 };

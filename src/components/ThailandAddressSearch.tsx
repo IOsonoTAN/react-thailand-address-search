@@ -17,22 +17,41 @@ export interface ThailandData {
 
 export interface ThailandAddressSearchProps {
   containerClassName?: string;
-  inputClassName?: string;
   dataSource?: string;
+  displayFields?: string[];
+  dropdownSelectedColor?: string;
   highlightColor?: string;
+  inputClassName?: string;
   language?: "th" | "en";
-  onSelectLocation: (location: ThailandData | undefined) => void;
+  maxResults?: number;
+  placeholder?: string;
   searchTermFormat?: string;
+  separator?: string;
+  onSelectLocation: (location: ThailandData | undefined) => void;
+  showClearButton?: boolean;
+  clearButtonClassName?: string;
 }
 
 const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   containerClassName = "max-w-md mx-auto mt-8",
-  inputClassName = "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+  clearButtonClassName = "absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600",
   dataSource,
+  displayFields = [
+    "districtName",
+    "subdistrictName",
+    "provinceName",
+    "postalCode",
+  ],
+  dropdownSelectedColor = "bg-green-200",
   highlightColor = "bg-yellow-200",
+  inputClassName = "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
   language = "th",
+  maxResults = 10,
+  placeholder,
+  searchTermFormat,
+  separator = " - ",
+  showClearButton = true,
   onSelectLocation,
-  searchTermFormat = ":districtName - :subdistrictName - :provinceName - :postalCode",
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<ThailandData[]>([]);
@@ -83,11 +102,11 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
 
   useEffect(() => {
     const filteredResults = filterResults(searchTerm);
-    setResults(filteredResults);
+    setResults(filteredResults.slice(0, maxResults));
     if (resultsContainerRef.current) {
       resultsContainerRef.current.scrollTop = 0;
     }
-  }, [searchTerm, filterResults]);
+  }, [searchTerm, filterResults, maxResults]);
 
   useEffect(() => {
     if (resultsContainerRef.current && focusedIndex >= 0) {
@@ -122,7 +141,17 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
       <span>
         {parts.filter(String).map((part, i) =>
           regex.test(part) ? (
-            <mark key={i} className={highlightColor}>
+            <mark
+              key={i}
+              style={{
+                backgroundColor: highlightColor.startsWith("bg-")
+                  ? undefined
+                  : highlightColor,
+              }}
+              className={
+                highlightColor.startsWith("bg-") ? highlightColor : undefined
+              }
+            >
               {part}
             </mark>
           ) : (
@@ -140,17 +169,34 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
             districtName: result.districtNameEn,
             subdistrictName: result.subdistrictNameEn,
             provinceName: result.provinceNameEn,
+            postalCode: result.postalCode.toString(),
           }
         : {
             districtName: result.districtNameTh,
             subdistrictName: result.subdistrictNameTh,
             provinceName: result.provinceNameTh,
+            postalCode: result.postalCode.toString(),
           };
-    return searchTermFormat
-      .replace(/:districtName/g, data.districtName)
-      .replace(/:subdistrictName/g, data.subdistrictName)
-      .replace(/:provinceName/g, data.provinceName)
-      .replace(/:postalCode/g, result.postalCode.toString());
+
+    if (searchTermFormat) {
+      let formattedText = searchTermFormat;
+      Object.entries(data).forEach(([key, value]) => {
+        formattedText = formattedText.replace(
+          new RegExp(`:${key}`, "g"),
+          value || ""
+        );
+      });
+      return formattedText;
+    }
+
+    if (displayFields && displayFields.length > 0) {
+      return displayFields
+        .map((field) => data[field as keyof typeof data])
+        .filter(Boolean)
+        .join(separator);
+    }
+
+    return "";
   };
 
   const renderLocationText = (result: ThailandData) => {
@@ -195,6 +241,35 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
     inputRef.current?.blur();
   };
 
+  const handleInputBlur = () => {
+    setTimeout(() => {
+      setResults([]);
+      setFocusedIndex(-1);
+      if (!searchTerm.trim()) {
+        setSearchTerm("");
+        onSelectLocation(undefined);
+      }
+    }, 200);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setSearchTerm(newValue);
+
+    if (!newValue.trim()) {
+      setResults([]);
+      onSelectLocation(undefined);
+    }
+  };
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setSearchTerm("");
+    setResults([]);
+    onSelectLocation(undefined);
+    inputRef.current?.focus();
+  };
+
   return (
     <div className={containerClassName}>
       <div className="relative">
@@ -202,26 +277,42 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
           ref={inputRef}
           type="text"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onClick={handleInputClick}
+          onBlur={handleInputBlur}
           placeholder={
-            language === "en"
+            placeholder ||
+            (language === "en"
               ? "Search for a location in Thailand..."
-              : "ค้นหาสถานที่ในประเทศไทย..."
+              : "ค้นหาสถานที่ในประเทศไทย...")
           }
-          className={inputClassName}
+          className={`${inputClassName} ${showClearButton ? "pr-8" : ""}`}
         />
+        {showClearButton && searchTerm && (
+          <button
+            onClick={handleClear}
+            className={clearButtonClassName}
+            type="button"
+            aria-label="Clear search"
+          >
+            ✕
+          </button>
+        )}
         {results.length > 0 && (
           <ul
             ref={resultsContainerRef}
-            className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+            className={
+              "absolute z-10 w-full mt-1 border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+            }
           >
             {results.map((result, index) => (
               <li
                 key={index}
                 className={`px-4 py-2 cursor-pointer ${
-                  index === focusedIndex ? "bg-blue-100" : "hover:bg-gray-100"
+                  index === focusedIndex
+                    ? dropdownSelectedColor
+                    : "hover:bg-gray-100"
                 }`}
                 onClick={() => handleSelectLocation(result)}
               >

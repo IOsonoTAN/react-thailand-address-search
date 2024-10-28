@@ -13,12 +13,16 @@ export interface ThailandData {
     postalCode: number;
 }
 export interface ThailandAddressSearchProps {
-    onSelectLocation: (location: ThailandData | undefined) => void;
     containerClassName?: string;
-    highlightColor?: string;
-    searchTermFormat?: string;
-    language?: "th" | "en";
+    inputClassName?: string;
     dataSource?: string;
+    highlightColor?: string;
+    language?: "th" | "en";
+    onSelectLocation: (location: ThailandData | undefined) => void;
+    searchTermFormat?: string;
+    placeholder?: string;
+    maxResults?: number;
+    displayFields?: string[];
 }
 declare const ThailandAddressSearch: React.FC<ThailandAddressSearchProps>;
 export default ThailandAddressSearch;

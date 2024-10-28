@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { loadThailandData } from "../utils/loadThailandData";
 var ThailandAddressSearch = function (_a) {
-    var onSelectLocation = _a.onSelectLocation, _b = _a.containerClassName, containerClassName = _b === void 0 ? "max-w-md mx-auto mt-8" : _b, _c = _a.highlightColor, highlightColor = _c === void 0 ? "bg-yellow-200" : _c, _d = _a.searchTermFormat, searchTermFormat = _d === void 0 ? ":districtName - :subdistrictName - :provinceName - :postalCode" : _d, _e = _a.language, language = _e === void 0 ? "th" : _e, dataSource = _a.dataSource;
-    var _f = useState(""), searchTerm = _f[0], setSearchTerm = _f[1];
-    var _g = useState([]), results = _g[0], setResults = _g[1];
-    var _h = useState(-1), focusedIndex = _h[0], setFocusedIndex = _h[1];
-    var _j = useState([]), thailandData = _j[0], setThailandData = _j[1];
+    var _b = _a.containerClassName, containerClassName = _b === void 0 ? "max-w-md mx-auto mt-8" : _b, _c = _a.inputClassName, inputClassName = _c === void 0 ? "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" : _c, dataSource = _a.dataSource, _d = _a.highlightColor, highlightColor = _d === void 0 ? "bg-yellow-200" : _d, _e = _a.language, language = _e === void 0 ? "th" : _e, onSelectLocation = _a.onSelectLocation, _f = _a.searchTermFormat, searchTermFormat = _f === void 0 ? ":districtName - :subdistrictName - :provinceName - :postalCode" : _f, placeholder = _a.placeholder, _g = _a.maxResults, maxResults = _g === void 0 ? 10 : _g, _h = _a.displayFields, displayFields = _h === void 0 ? [
+        "districtName",
+        "subdistrictName",
+        "provinceName",
+        "postalCode",
+    ] : _h;
+    var _j = useState(""), searchTerm = _j[0], setSearchTerm = _j[1];
+    var _k = useState([]), results = _k[0], setResults = _k[1];
+    var _l = useState(-1), focusedIndex = _l[0], setFocusedIndex = _l[1];
+    var _m = useState([]), thailandData = _m[0], setThailandData = _m[1];
     var resultsContainerRef = useRef(null);
     var inputRef = useRef(null);
     useEffect(function () {
@@ -46,11 +51,11 @@ var ThailandAddressSearch = function (_a) {
     }, [thailandData, language]);
     useEffect(function () {
         var filteredResults = filterResults(searchTerm);
-        setResults(filteredResults);
+        setResults(filteredResults.slice(0, maxResults));
         if (resultsContainerRef.current) {
             resultsContainerRef.current.scrollTop = 0;
         }
-    }, [searchTerm, filterResults]);
+    }, [searchTerm, filterResults, maxResults]);
     useEffect(function () {
         if (resultsContainerRef.current && focusedIndex >= 0) {
             var focusedElement = resultsContainerRef.current.children[focusedIndex];
@@ -85,17 +90,26 @@ var ThailandAddressSearch = function (_a) {
                 districtName: result.districtNameEn,
                 subdistrictName: result.subdistrictNameEn,
                 provinceName: result.provinceNameEn,
+                postalCode: result.postalCode.toString(),
             }
             : {
                 districtName: result.districtNameTh,
                 subdistrictName: result.subdistrictNameTh,
                 provinceName: result.provinceNameTh,
+                postalCode: result.postalCode.toString(),
             };
-        return searchTermFormat
-            .replace(/:districtName/g, data.districtName)
-            .replace(/:subdistrictName/g, data.subdistrictName)
-            .replace(/:provinceName/g, data.provinceName)
-            .replace(/:postalCode/g, result.postalCode.toString());
+        if (displayFields && displayFields.length > 0) {
+            return displayFields
+                .map(function (field) { return data[field]; })
+                .filter(Boolean)
+                .join(" - ");
+        }
+        var formattedText = searchTermFormat;
+        Object.entries(data).forEach(function (_a) {
+            var key = _a[0], value = _a[1];
+            formattedText = formattedText.replace(new RegExp(":".concat(key), "g"), value || "");
+        });
+        return formattedText;
     };
     var renderLocationText = function (result) {
         var text = getLocationText(result);
@@ -139,11 +153,22 @@ var ThailandAddressSearch = function (_a) {
         onSelectLocation(result);
         (_a = inputRef.current) === null || _a === void 0 ? void 0 : _a.blur();
     };
+    var handleInputBlur = function () {
+        setTimeout(function () {
+            setResults([]);
+            setFocusedIndex(-1);
+            if (!searchTerm.trim()) {
+                setSearchTerm("");
+                onSelectLocation(undefined);
+            }
+        }, 200);
+    };
     return (React.createElement("div", { className: containerClassName },
         React.createElement("div", { className: "relative" },
-            React.createElement("input", { ref: inputRef, type: "text", value: searchTerm, onChange: function (e) { return setSearchTerm(e.target.value); }, onKeyDown: handleKeyDown, onClick: handleInputClick, placeholder: language === "en"
-                    ? "Search for a location in Thailand..."
-                    : "ค้นหาสถานที่ในประเทศไทย...", className: "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" }),
+            React.createElement("input", { ref: inputRef, type: "text", value: searchTerm, onChange: function (e) { return setSearchTerm(e.target.value); }, onKeyDown: handleKeyDown, onClick: handleInputClick, onBlur: handleInputBlur, placeholder: placeholder ||
+                    (language === "en"
+                        ? "Search for a location in Thailand..."
+                        : "ค้นหาสถานที่ในประเทศไทย..."), className: inputClassName }),
             results.length > 0 && (React.createElement("ul", { ref: resultsContainerRef, className: "absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto" }, results.map(function (result, index) { return (React.createElement("li", { key: index, className: "px-4 py-2 cursor-pointer ".concat(index === focusedIndex ? "bg-blue-100" : "hover:bg-gray-100"), onClick: function () { return handleSelectLocation(result); } }, renderLocationText(result))); }))))));
 };
 export default ThailandAddressSearch;
