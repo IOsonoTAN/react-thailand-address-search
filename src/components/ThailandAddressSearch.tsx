@@ -18,6 +18,7 @@ export interface ThailandData {
 export interface ThailandAddressSearchProps {
   containerClassName?: string;
   dataSource?: string;
+  defaultValueId?: number;
   displayFields?: string[];
   dropdownSelectedColor?: string;
   highlightColor?: string;
@@ -30,12 +31,15 @@ export interface ThailandAddressSearchProps {
   onSelectLocation: (location: ThailandData | undefined) => void;
   showClearButton?: boolean;
   clearButtonClassName?: string;
+  clickToClear?: boolean;
+  readOnlyIfSelected?: boolean;
 }
 
 const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   containerClassName = "max-w-md mx-auto mt-8",
   clearButtonClassName = "absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600",
   dataSource,
+  defaultValueId,
   displayFields = [
     "districtName",
     "subdistrictName",
@@ -52,7 +56,10 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   separator = " - ",
   showClearButton = true,
   onSelectLocation,
+  clickToClear = true,
+  readOnlyIfSelected = true,
 }) => {
+  const [searchTermId, setSearchTermId] = useState<number | undefined>();
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<ThailandData[]>([]);
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -73,6 +80,19 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   useEffect(() => {
     setFocusedIndex(-1);
   }, [searchTerm]);
+
+  useEffect(() => {
+    if (defaultValueId) {
+      const defaultValue = thailandData.find(
+        (item) => item.id === defaultValueId
+      );
+      if (defaultValue) {
+        setSearchTermId(defaultValueId);
+        setSearchTerm(getLocationText(defaultValue));
+        onSelectLocation(defaultValue);
+      }
+    }
+  }, [defaultValueId, thailandData]);
 
   const filterResults = useCallback(
     (query: string) => {
@@ -205,7 +225,8 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   };
 
   const handleInputClick = () => {
-    if (searchTerm !== "") {
+    if (clickToClear && searchTerm !== "") {
+      setSearchTermId(undefined);
       setSearchTerm("");
       setResults([]);
       onSelectLocation(undefined);
@@ -222,6 +243,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
     } else if (e.key === "Enter" && focusedIndex >= 0) {
       e.preventDefault();
       const selectedResult = results[focusedIndex];
+      setSearchTermId(selectedResult.id);
       setSearchTerm(getLocationText(selectedResult));
       setResults([]);
       setFocusedIndex(-1);
@@ -234,6 +256,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   };
 
   const handleSelectLocation = (result: ThailandData) => {
+    setSearchTermId(result.id);
     setSearchTerm(getLocationText(result));
     setResults([]);
     setFocusedIndex(-1);
@@ -247,6 +270,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
       setFocusedIndex(-1);
       if (!searchTerm.trim()) {
         setSearchTerm("");
+        setSearchTermId(undefined);
         onSelectLocation(undefined);
       }
     }, 200);
@@ -255,6 +279,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchTerm(newValue);
+    setSearchTermId(undefined);
 
     if (!newValue.trim()) {
       setResults([]);
@@ -265,6 +290,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   const handleClear = (e: React.MouseEvent) => {
     e.preventDefault();
     setSearchTerm("");
+    setSearchTermId(undefined);
     setResults([]);
     onSelectLocation(undefined);
     inputRef.current?.focus();
@@ -279,6 +305,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
           value={searchTerm}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
+          readOnly={readOnlyIfSelected && !!searchTermId}
           onClick={handleInputClick}
           onBlur={handleInputBlur}
           placeholder={

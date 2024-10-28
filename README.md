@@ -73,19 +73,22 @@ interface ThailandData {
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| language | `"th"` \| `"en"` | No | `"th"` | Sets display language |
-| highlightColor | `string` | No | `"bg-yellow-200"` | CSS class or color for highlighting matches |
-| dropdownSelectedColor | `string` | No | `"bg-green-200"` | CSS class for selected dropdown item |
 | clearButtonClassName | `string` | No | `"absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"` | CSS class for clear button |
-| searchTermFormat | `string` | No | - | Custom format for display (e.g. `:districtName / :subdistrictName`) |
-| dataSource | `string` | No | `/data/thailand.zip` | Custom path to data source |
 | containerClassName | `string` | No | `"max-w-md mx-auto mt-8"` | Container CSS class |
-| inputClassName | `string` | No | `"w-full px-4 py-2..."` | Input field CSS class |
-| separator | `string` | No | `" - "` | Separator for display fields |
-| placeholder | `string` | No | Language-based default: `Search for a location in Thailand...`  or  `ค้นหาสถานที่ในประเทศไทย...` | Input placeholder text |
-| maxResults | `number` | No | `10` | Maximum number of results to show |
+| dataSource | `string` | No | `/data/thailand.zip` | Custom path to data source |
+| defaultValueId | `number` | No | - | Default value ID |
 | displayFields | `string[]` | No | `["districtName", "subdistrictName", "provinceName", "postalCode"]` | Fields to display |
+| dropdownSelectedColor | `string` | No | `"bg-green-200"` | CSS class for selected dropdown item |
+| highlightColor | `string` | No | `"bg-yellow-200"` | CSS class or color for highlighting matches |
+| inputClassName | `string` | No | `"w-full px-4 py-2..."` | Input field CSS class |
+| language | `"th"` \| `"en"` | No | `"th"` | Sets display language |
+| maxResults | `number` | No | `10` | Maximum number of results to show |
+| placeholder | `string` | No | Language-based default: `Search for a location in Thailand...`  or  `ค้นหาสถานที่ในประเทศไทย...` | Input placeholder text |
+| searchTermFormat | `string` | No | - | Custom format for display (e.g. `:districtName / :subdistrictName`) |
+| separator | `string` | No | `" - "` | Separator for display fields |
 | showClearButton | `boolean` | No | `true` | Show clear button |
+| clickToClear | `boolean` | No | `false` | Click to clear input |
+| readOnlyIfSelected | `boolean` | No | `false` | Read only if selected |
 | onSelectLocation | `(location: ThailandData \| undefined) => void` | Yes | - | Selection callback function |
 
 ## Data Source

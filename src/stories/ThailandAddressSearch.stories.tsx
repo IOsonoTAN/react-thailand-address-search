@@ -82,3 +82,9 @@ CustomDropdownSelectedColor.args = {
   ...Default.args,
   dropdownSelectedColor: "bg-red-200",
 };
+
+export const CustomDefaultValue = Template.bind({});
+CustomDefaultValue.args = {
+  ...Default.args,
+  defaultValueId: 54,
+};
