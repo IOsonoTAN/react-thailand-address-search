@@ -16,21 +16,23 @@ export interface ThailandData {
 }
 
 export interface ThailandAddressSearchProps {
-  onSelectLocation: (location: ThailandData | undefined) => void;
   containerClassName?: string;
-  highlightColor?: string;
-  searchTermFormat?: string;
-  language?: "th" | "en";
+  inputClassName?: string;
   dataSource?: string;
+  highlightColor?: string;
+  language?: "th" | "en";
+  onSelectLocation: (location: ThailandData | undefined) => void;
+  searchTermFormat?: string;
 }
 
 const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
-  onSelectLocation,
   containerClassName = "max-w-md mx-auto mt-8",
-  highlightColor = "bg-yellow-200",
-  searchTermFormat = ":districtName - :subdistrictName - :provinceName - :postalCode",
-  language = "th",
+  inputClassName = "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
   dataSource,
+  highlightColor = "bg-yellow-200",
+  language = "th",
+  onSelectLocation,
+  searchTermFormat = ":districtName - :subdistrictName - :provinceName - :postalCode",
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<ThailandData[]>([]);
@@ -208,7 +210,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
               ? "Search for a location in Thailand..."
               : "ค้นหาสถานที่ในประเทศไทย..."
           }
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputClassName}
         />
         {results.length > 0 && (
           <ul
