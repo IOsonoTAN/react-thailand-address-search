@@ -33,6 +33,7 @@ export interface ThailandAddressSearchProps {
   clearButtonClassName?: string;
   clickToClear?: boolean;
   readOnlyIfSelected?: boolean;
+  disabled?: boolean;
 }
 
 const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
@@ -58,6 +59,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   onSelectLocation,
   clickToClear = true,
   readOnlyIfSelected = true,
+  disabled = false,
 }) => {
   const [searchTermId, setSearchTermId] = useState<number | undefined>();
   const [searchTerm, setSearchTerm] = useState("");
@@ -234,6 +236,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setFocusedIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev));
@@ -256,6 +259,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   };
 
   const handleSelectLocation = (result: ThailandData) => {
+    if (disabled) return;
     setSearchTermId(result.id);
     setSearchTerm(getLocationText(result));
     setResults([]);
@@ -277,6 +281,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
     const newValue = e.target.value;
     setSearchTerm(newValue);
     setSearchTermId(undefined);
@@ -289,6 +294,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
 
   const handleClear = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (disabled) return;
     setSearchTerm("");
     setSearchTermId(undefined);
     setResults([]);
@@ -305,7 +311,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
           value={searchTerm}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          readOnly={readOnlyIfSelected && !!searchTermId}
+          readOnly={(readOnlyIfSelected && !!searchTermId) || disabled}
           onClick={handleInputClick}
           onBlur={handleInputBlur}
           placeholder={
@@ -315,8 +321,9 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
               : "ค้นหาสถานที่ในประเทศไทย...")
           }
           className={`${inputClassName} ${showClearButton ? "pr-8" : ""}`}
+          disabled={disabled}
         />
-        {showClearButton && searchTerm && (
+        {showClearButton && searchTerm && !disabled && (
           <button
             onClick={handleClear}
             className={clearButtonClassName}

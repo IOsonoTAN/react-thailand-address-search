@@ -88,3 +88,9 @@ CustomDefaultValue.args = {
   ...Default.args,
   defaultValueId: 54,
 };
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  ...Default.args,
+  disabled: true,
+};
