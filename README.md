@@ -75,6 +75,7 @@ interface ThailandData {
 |-----------|------|----------|---------|-------------|
 | clearButtonClassName | `string` | No | `"absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"` | CSS class for clear button |
 | containerClassName | `string` | No | `"max-w-md mx-auto mt-8"` | Container CSS class |
+| resultsContainerClassName | `string` | No | - | CSS class for results container |
 | dataSource | `string` | No | `/data/thailand.zip` | Custom path to data source |
 | defaultValueId | `number` | No | - | Default value ID |
 | displayFields | `string[]` | No | `["districtName", "subdistrictName", "provinceName", "postalCode"]` | Fields to display |
@@ -83,6 +84,7 @@ interface ThailandData {
 | inputClassName | `string` | No | `"w-full px-4 py-2..."` | Input field CSS class |
 | language | `"th"` \| `"en"` | No | `"th"` | Sets display language |
 | maxResults | `number` | No | `10` | Maximum number of results to show |
+| minQueryLength | `number` | No | `4` | Minimum query length to show results |
 | placeholder | `string` | No | Language-based default: `Search for a location in Thailand...`  or  `ค้นหาสถานที่ในประเทศไทย...` | Input placeholder text |
 | searchTermFormat | `string` | No | - | Custom format for display (e.g. `:districtName / :subdistrictName`) |
 | separator | `string` | No | `" - "` | Separator for display fields |

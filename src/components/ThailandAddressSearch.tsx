@@ -25,6 +25,8 @@ export interface ThailandAddressSearchProps {
   inputClassName?: string;
   language?: "th" | "en";
   maxResults?: number;
+  minQueryLength?: number;
+  resultsContainerClassName?: string;
   placeholder?: string;
   searchTermFormat?: string;
   separator?: string;
@@ -52,6 +54,8 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
   inputClassName = "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
   language = "th",
   maxResults = 10,
+  minQueryLength = 4,
+  resultsContainerClassName,
   placeholder,
   searchTermFormat,
   separator = " - ",
@@ -98,7 +102,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
 
   const filterResults = useCallback(
     (query: string) => {
-      if (query.length < 2) return [];
+      if (query.length < minQueryLength) return [];
 
       return thailandData.filter((item) => {
         if (/^\d+$/.test(query)) {
@@ -336,9 +340,7 @@ const ThailandAddressSearch: React.FC<ThailandAddressSearchProps> = ({
         {results.length > 0 && (
           <ul
             ref={resultsContainerRef}
-            className={
-              "absolute z-10 w-full mt-1 border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-            }
+            className={`absolute z-100 w-full mt-1 border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto ${resultsContainerClassName}`}
           >
             {results.map((result, index) => (
               <li
